@@ -23,7 +23,7 @@ class WorldBankService
             $response = $this->client->get("country/{$countryCode}/indicator/{$indicator}", [
                 'query' => [
                     'format' => 'json',
-                    'per_page' => 1,
+                    'mrnev' => 1,
                 ]
             ]);
 

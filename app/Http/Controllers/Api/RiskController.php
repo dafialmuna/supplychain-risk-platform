@@ -60,7 +60,14 @@ class RiskController extends Controller
         // Ambil kurs dari ExchangeRate
         $currencyRate = null;
         if ($country->currency) {
-            $currencyRate = $this->exchangeRate->getRate('USD', $country->currency);
+            $rate = $this->exchangeRate->getRate('USD', $country->currency);
+            if ($rate !== null) {
+                $currencyRate = [
+                    'rate' => $rate,
+                    'target' => $country->currency,
+                    'date' => now()->format('Y-m-d')
+                ];
+            }
         }
 
         // Ambil berita dan analisis sentimen
@@ -84,9 +91,9 @@ class RiskController extends Controller
         $total = round($total);
 
         $level = 'low';
-        if ($total >= 75) $level = 'critical';
-        elseif ($total >= 55) $level = 'high';
-        elseif ($total >= 30) $level = 'medium';
+        if ($total >= 60) $level = 'critical';
+        elseif ($total >= 35) $level = 'high';
+        elseif ($total >= 25) $level = 'medium';
 
         // Simpan ke database (opsional)
         RiskScore::create([

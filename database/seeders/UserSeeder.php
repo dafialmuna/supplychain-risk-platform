@@ -10,6 +10,7 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
+        // Admin user
         User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -19,6 +20,7 @@ class UserSeeder extends Seeder
             ]
         );
 
+        // Analyst user
         User::updateOrCreate(
             ['email' => 'analyst@example.com'],
             [
