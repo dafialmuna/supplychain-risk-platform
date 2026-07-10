@@ -26,6 +26,7 @@ Route::get('/risk/leaderboard', [RiskController::class, 'leaderboard']);
 
 // Weather
 Route::get('/weather', [WeatherController::class, 'index']);
+Route::get('/weather/all', [WeatherController::class, 'all']);
 Route::get('/weather/forecast', [WeatherController::class, 'forecast']);
 
 // Ports

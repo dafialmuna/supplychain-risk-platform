@@ -46,10 +46,11 @@ class RiskController extends Controller
             return response()->json(['error' => 'Country not found'], 404);
         }
 
-        // Ambil data ekonomi dari World Bank
-        $gdp = $this->worldBank->getGDP($code) ?? 0;
-        $inflation = $this->worldBank->getInflation($code) ?? 0;
-        $population = $this->worldBank->getPopulation($code) ?? 0;
+        // Ambil data ekonomi dari World Bank (Gunakan code3 ISO Alpha-3 agar lebih kompatibel)
+        $wbCode = $country->code3 ?? $country->code;
+        $gdp = $this->worldBank->getGDP($wbCode) ?? 0;
+        $inflation = $this->worldBank->getInflation($wbCode) ?? 0;
+        $population = $this->worldBank->getPopulation($wbCode) ?? 0;
 
         // Ambil cuaca dari Open-Meteo
         $weatherData = null;

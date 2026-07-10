@@ -35,6 +35,26 @@ class WeatherController extends Controller
         return response()->json(['error' => 'Missing lat/lng or country code'], 400);
     }
 
+    public function all()
+    {
+        $cacheKey = 'weather_all_countries';
+        $weatherData = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () {
+            $countries = Country::all();
+            $data = [];
+            foreach ($countries as $country) {
+                if ($country->lat && $country->lng) {
+                    $weather = $this->weather->getCurrentWeather($country->lat, $country->lng);
+                    if ($weather) {
+                        $data[$country->code] = $weather;
+                    }
+                }
+            }
+            return $data;
+        });
+
+        return response()->json(['data' => $weatherData]);
+    }
+
     public function forecast(Request $request)
     {
         if (!$request->has('code')) {

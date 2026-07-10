@@ -21,6 +21,12 @@ class OpenMeteoService
      */
     public function getCurrentWeather($lat, $lng)
     {
+        $cacheKey = "weather_{$lat}_{$lng}";
+        $cached = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         try {
             $response = $this->client->get('forecast', [
                 'query' => [
@@ -32,7 +38,11 @@ class OpenMeteoService
             ]);
 
             $data = json_decode($response->getBody(), true);
-            return $data['current_weather'] ?? null;
+            $weather = $data['current_weather'] ?? null;
+            if ($weather) {
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $weather, 900);
+            }
+            return $weather;
         } catch (\Exception $e) {
             return null;
         }

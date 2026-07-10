@@ -179,32 +179,89 @@ function simulateRoute() {
         
     markers.push(markerO, markerD);
     
-    // Gambar garis
-    routeLayer = L.polyline([originLatLng, destLatLng], {
-        color: '#f59e0b',
-        weight: 4,
-        dashArray: '10, 10',
-        opacity: 0.8
-    }).addTo(routeMap);
-    
-    // Sesuaikan view agar muat kedua titik
-    routeMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
-    
-    // Kalkulasi Jarak (meter ke km)
-    const distanceMeters = originLatLng.distanceTo(destLatLng);
-    const distanceKm = Math.round(distanceMeters / 1000);
-    
-    // Kalkulasi Titik Tengah (Midpoint)
-    const midLat = (parseFloat(origin.lat) + parseFloat(dest.lat)) / 2;
-    const midLng = (parseFloat(origin.lng) + parseFloat(dest.lng)) / 2;
-    
-    // Tampilkan hasil UI
-    document.getElementById('routeResults').classList.remove('d-none');
-    document.getElementById('routeDistance').textContent = distanceKm.toLocaleString() + " km";
-    
-    // Fetch cuaca laut di Midpoint
-    fetchMidpointWeather(midLat, midLng);
+    // Tampilkan loading di tombol
+    const btn = event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Menghitung rute laut...';
+    btn.disabled = true;
+
+    // Load searoute-js dinamis dan gambar rute laut
+    import('https://esm.sh/searoute-js@0.1.0').then(module => {
+        const searoute = module.default;
+        
+        const originPt = {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [origin.lng, origin.lat] }
+        };
+        
+        const destPt = {
+            "type": "Feature",
+            "geometry": { "type": "Point", "coordinates": [dest.lng, dest.lat] }
+        };
+
+        try {
+            // Kalkulasi rute laut sebenarnya!
+            const routeGeoJSON = searoute(originPt, destPt);
+            
+            if (routeGeoJSON) {
+                routeLayer = L.geoJSON(routeGeoJSON, {
+                    style: { color: '#f59e0b', weight: 4, dashArray: '10, 10', opacity: 0.8 }
+                }).addTo(routeMap);
+                
+                // Kalkulasi Jarak (dari GeoJSON properties atau pakai turf)
+                // searoute-js biasanya memasukkan properties.length (dalam satuan nautikal mil, atau sesuai argumen)
+                // Kita hitung jarak di frontend saja atau ambil properties-nya
+                let distanceKm = 0;
+                if (routeGeoJSON.properties && routeGeoJSON.properties.length) {
+                    distanceKm = Math.round(routeGeoJSON.properties.length * 1.852); // NM to KM
+                } else {
+                    // Fallback jarak lurus jika properties tidak ada
+                    distanceKm = Math.round(originLatLng.distanceTo(destLatLng) / 1000);
+                }
+                
+                document.getElementById('routeDistance').textContent = distanceKm.toLocaleString() + " km (Rute Laut)";
+                
+                // Cari titik tengah rute (midpoint dari koordinat array)
+                const coords = routeGeoJSON.geometry.coordinates;
+                const midIndex = Math.floor(coords.length / 2);
+                const midLng = coords[midIndex][0];
+                const midLat = coords[midIndex][1];
+                
+                routeMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+                
+                // Tampilkan hasil UI
+                document.getElementById('routeResults').classList.remove('d-none');
+                
+                // Fetch cuaca laut di Midpoint rute sebenarnya
+                fetchMidpointWeather(midLat, midLng);
+            } else {
+                throw new Error("Rute laut tidak ditemukan.");
+            }
+        } catch (e) {
+            console.error("Searoute error:", e);
+            // Fallback ke garis lurus jika rute laut gagal
+            routeLayer = L.polyline([originLatLng, destLatLng], {
+                color: '#ef4444', weight: 4, dashArray: '10, 10', opacity: 0.8
+            }).addTo(routeMap);
+            
+            const distanceKm = Math.round(originLatLng.distanceTo(destLatLng) / 1000);
+            document.getElementById('routeDistance').textContent = distanceKm.toLocaleString() + " km (Rute Lurus/Udara)";
+            document.getElementById('routeResults').classList.remove('d-none');
+            
+            const midLat = (parseFloat(origin.lat) + parseFloat(dest.lat)) / 2;
+            const midLng = (parseFloat(origin.lng) + parseFloat(dest.lng)) / 2;
+            fetchMidpointWeather(midLat, midLng);
+            
+            routeMap.fitBounds(routeLayer.getBounds(), { padding: [50, 50] });
+        }
+    }).catch(err => {
+        console.error("Gagal load module searoute-js:", err);
+    }).finally(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    });
 }
+
 
 function fetchMidpointWeather(lat, lng) {
     document.getElementById('midpointTemp').textContent = "Loading...";

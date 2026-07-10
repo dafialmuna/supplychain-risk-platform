@@ -28,6 +28,12 @@ class GNewsService
             return $this->getDummyNews($query);
         }
 
+        $cacheKey = "gnews_" . md5($query . $country . $max);
+        $cached = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         try {
             $params = [
                 'q' => $query,
@@ -42,7 +48,8 @@ class GNewsService
             $response = $this->client->get('search', ['query' => $params]);
             $data = json_decode($response->getBody(), true);
 
-            if (isset($data['articles'])) {
+            if (isset($data['articles']) && !empty($data['articles'])) {
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $data['articles'], 3600);
                 return $data['articles'];
             }
             return [];

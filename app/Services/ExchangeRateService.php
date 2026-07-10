@@ -22,10 +22,17 @@ class ExchangeRateService
      */
     public function getLatestRates($base = 'USD')
     {
+        $cacheKey = "exchangerate_latest_{$base}";
+        $cached = \Illuminate\Support\Facades\Cache::get($cacheKey);
+        if ($cached !== null) {
+            return $cached;
+        }
+
         try {
             $response = $this->client->get("latest/{$base}");
             $data = json_decode($response->getBody(), true);
             if ($data['result'] === 'success') {
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $data['rates'], 3600);
                 return $data['rates'];
             }
             return null;
