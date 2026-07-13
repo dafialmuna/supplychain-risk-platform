@@ -89,28 +89,29 @@ function loadNews() {
 
             data.news.forEach(item => {
                 const sentiment = item.sentiment; // positive, negative, neutral
-                let badgeClass = 'bg-secondary';
-                if (sentiment === 'positive') badgeClass = 'bg-success';
-                else if (sentiment === 'negative') badgeClass = 'bg-danger';
+                let badgeClass = 'risk-badge-low';
+                if (sentiment === 'positive') badgeClass = 'risk-badge-low';
+                else if (sentiment === 'negative') badgeClass = 'risk-badge-high';
+                else badgeClass = 'bg-secondary text-white';
 
                 const card = document.createElement('div');
                 card.className = 'col-md-6 mb-3';
                 card.innerHTML = `
-                    <div class="card h-100 p-3 shadow-sm border-0">
-                        <div class="d-flex justify-content-between align-items-start mb-2">
-                            <span class="badge ${badgeClass} mb-2 px-3 py-2 text-uppercase">
-                                <i class="fas fa-robot me-1"></i> Sentiment: ${sentiment}
+                    <div class="card h-100 p-4 shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="badge ${badgeClass} px-3 py-2 text-uppercase" style="border-radius: 8px; font-size: 0.75rem;">
+                                <i class="fas fa-robot me-1"></i> Sentimen: ${sentiment === 'positive' ? 'Positif' : (sentiment === 'negative' ? 'Negatif' : 'Netral')}
                             </span>
-                            <small class="text-muted">${new Date(item.publishedAt).toLocaleDateString()}</small>
+                            <small class="text-muted"><i class="far fa-calendar-alt me-1"></i>${new Date(item.publishedAt).toLocaleDateString('id-ID')}</small>
                         </div>
-                        <h5 class="card-title fw-bold">
-                            <a href="${item.url}" target="_blank" class="text-decoration-none text-dark">${item.title}</a>
+                        <h5 class="card-title fw-bold mb-3" style="line-height: 1.4;">
+                            <a href="${item.url}" target="_blank" class="news-link text-decoration-none">${item.title}</a>
                         </h5>
-                        <p class="card-text text-muted small">${item.description || 'No description available.'}</p>
-                        <div class="mt-auto d-flex justify-content-between align-items-center border-top pt-3">
+                        <p class="card-text text-muted mb-4" style="font-size: 0.85rem; line-height: 1.6;">${item.description || 'Tidak ada deskripsi tersedia.'}</p>
+                        <div class="mt-auto d-flex justify-content-between align-items-center border-top border-secondary-subtle pt-3">
                             <small class="text-muted"><i class="fas fa-building me-1"></i>${item.source.name}</small>
-                            <span class="badge bg-light text-dark border">
-                                Pos: ${item.pos_score || 0} | Neg: ${item.neg_score || 0}
+                            <span class="badge bg-secondary-subtle text-white border-0 px-3 py-2" style="font-size: 0.75rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05) !important;">
+                                Positif: <strong class="text-success">${item.pos_score || 0}</strong> | Negatif: <strong class="text-danger">${item.neg_score || 0}</strong>
                             </span>
                         </div>
                     </div>
@@ -125,4 +126,20 @@ function loadNews() {
         });
 }
 </script>
+
+<style>
+    .news-link {
+        color: #f8fafc !important; /* Terang dan bersih */
+        transition: all 0.25s ease;
+    }
+    .news-link:hover {
+        color: var(--accent-cyan) !important; /* Efek hover menyala cyan */
+        text-shadow: 0 0 8px rgba(34, 211, 238, 0.3);
+    }
+    .form-label {
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+</style>
 @endpush

@@ -4,43 +4,53 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-tachometer-alt me-2 text-primary"></i>Dashboard</h2>
-    <span class="text-muted">{{ now()->format('d M Y H:i') }} UTC</span>
+    <h2 class="mb-0" style="font-weight: 800; letter-spacing: -0.5px;">
+        <i class="fas fa-tachometer-alt me-2" style="color: var(--accent-cyan); filter: drop-shadow(0 0 8px rgba(34,211,238,0.4));"></i>Dashboard
+    </h2>
+    <span class="text-muted" style="font-size: 0.85rem;">
+        <i class="far fa-clock me-1"></i>{{ now()->format('d M Y H:i') }} UTC
+    </span>
 </div>
 
 <!-- KPI Cards -->
 <div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="card p-3">
+    <div class="col-md-3 animate-in">
+        <div class="card p-3 kpi-card kpi-cyan">
+            <div class="kpi-icon"><i class="fas fa-globe-americas"></i></div>
             <div class="kpi-label">Total Countries</div>
-            <div class="kpi-value" id="totalCountries">-</div>
+            <div class="kpi-value" id="totalCountries" data-counter>-</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3">
+    <div class="col-md-3 animate-in">
+        <div class="card p-3 kpi-card kpi-emerald">
+            <div class="kpi-icon"><i class="fas fa-chart-pie"></i></div>
             <div class="kpi-label">Avg Risk Score</div>
-            <div class="kpi-value" id="avgRisk">-</div>
+            <div class="kpi-value" id="avgRisk" data-counter>-</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3">
+    <div class="col-md-3 animate-in">
+        <div class="card p-3 kpi-card kpi-rose">
+            <div class="kpi-icon"><i class="fas fa-exclamation-triangle"></i></div>
             <div class="kpi-label">High Risk Countries</div>
-            <div class="kpi-value" id="highRisk">-</div>
+            <div class="kpi-value" id="highRisk" data-counter>-</div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card p-3">
+    <div class="col-md-3 animate-in">
+        <div class="card p-3 kpi-card kpi-amber">
+            <div class="kpi-icon"><i class="fas fa-anchor"></i></div>
             <div class="kpi-label">Total Ports</div>
-            <div class="kpi-value" id="totalPorts">-</div>
+            <div class="kpi-value" id="totalPorts" data-counter>-</div>
         </div>
     </div>
 </div>
 
 <!-- Country Selector & Detail -->
 <div class="row g-3 mb-4">
-    <div class="col-md-4">
+    <div class="col-md-4 animate-in">
         <div class="card p-3">
-            <h5 class="mb-3">Select Country</h5>
+            <h5 class="section-title mb-3">
+                <i class="fas fa-search-location me-2" style="color: var(--accent-violet);"></i>Select Country
+            </h5>
             <div class="d-flex">
                 <select id="countrySelect" class="form-select flex-grow-1">
                     <option value="">Loading...</option>
@@ -49,7 +59,7 @@
                 <form action="{{ route('watchlist.store') }}" method="POST" class="ms-2">
                     @csrf
                     <input type="hidden" name="country_code" id="watchlistCountryCode" value="">
-                    <button type="submit" class="btn btn-outline-warning" title="Add to Watchlist">
+                    <button type="submit" class="btn btn-outline-warning" title="Add to Watchlist" style="border-radius: 10px; height: 100%;">
                         <i class="fas fa-star"></i>
                     </button>
                 </form>
@@ -57,25 +67,37 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-8 animate-in">
         <div class="card p-3">
             <div class="row">
-                <div class="col-md-3 text-center">
+                <div class="col-md-3 stat-item">
                     <div class="kpi-label">Risk Score</div>
-                    <div class="kpi-value" id="riskScore">-</div>
-                    <span id="riskLevel" class="badge bg-secondary">-</span>
+                    <!-- Risk Gauge -->
+                    <div class="risk-gauge mt-2" id="riskGaugeContainer">
+                        <svg width="90" height="90" viewBox="0 0 90 90">
+                            <circle class="gauge-bg" cx="45" cy="45" r="38"></circle>
+                            <circle class="gauge-fill" id="gaugeFill" cx="45" cy="45" r="38"
+                                stroke-dasharray="238.76"
+                                stroke-dashoffset="238.76"
+                                stroke="var(--accent-emerald)"></circle>
+                        </svg>
+                        <div class="gauge-value">
+                            <span class="gauge-number" id="riskScore">-</span>
+                            <span id="riskLevel" class="badge bg-secondary mt-1" style="font-size: 0.6rem;">-</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-md-3 stat-item">
                     <div class="kpi-label">GDP (USD)</div>
-                    <div class="kpi-value" id="gdpDisplay" style="font-size:1.2rem;">-</div>
+                    <div class="kpi-value mt-3" id="gdpDisplay" style="font-size:1.2rem;">-</div>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-md-3 stat-item">
                     <div class="kpi-label">Inflation</div>
-                    <div class="kpi-value" id="inflationDisplay">-</div>
+                    <div class="kpi-value mt-3" id="inflationDisplay">-</div>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-md-3 stat-item">
                     <div class="kpi-label">Population</div>
-                    <div class="kpi-value" id="populationDisplay" style="font-size:1.2rem;">-</div>
+                    <div class="kpi-value mt-3" id="populationDisplay" style="font-size:1.2rem;">-</div>
                 </div>
             </div>
         </div>
@@ -87,46 +109,52 @@
     <!-- Kolom Kiri: Cuaca, Kurs, dan Tren -->
     <div class="col-lg-7">
         <div class="row g-3 mb-3">
-            <div class="col-md-6">
-                <div class="card p-3 h-100 d-flex flex-column">
-                    <h5 class="mb-0"><i class="fas fa-cloud-sun me-2 text-info"></i>Current Weather</h5>
+            <div class="col-md-6 animate-in">
+                <div class="card p-3 h-100 d-flex flex-column weather-card">
+                    <h5 class="section-title mb-0">
+                        <i class="fas fa-cloud-sun me-2" style="color: var(--accent-cyan);"></i>Current Weather
+                    </h5>
                     <div id="weatherDetail" class="text-center py-3 flex-grow-1 d-flex flex-column justify-content-center">
-                        <span class="display-1" id="weatherIcon">🌤️</span>
-                        <h3 id="weatherTempDisplay" class="mt-2 fw-bold">- °C</h3>
+                        <span class="display-1" id="weatherIcon" style="filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">🌤️</span>
+                        <h3 id="weatherTempDisplay" class="mt-2 fw-bold" style="color: var(--text-primary);">- °C</h3>
                         <p id="weatherDesc" class="text-muted mb-0">Loading...</p>
-                        <div class="row mt-auto pt-3 border-top w-100 mx-0">
+                        <div class="row mt-auto pt-3 weather-stats w-100 mx-0">
                             <div class="col-4 px-1">
-                                <small class="text-muted d-block" style="font-size: 0.75rem;">Wind</small>
-                                <strong id="windSpeed" style="font-size: 0.85rem;">- km/h</strong>
-                            </div>
-                            <div class="col-4 px-1 border-start border-end">
-                                <small class="text-muted d-block" style="font-size: 0.75rem;">Rain</small>
-                                <strong id="rainFall" style="font-size: 0.85rem;">- mm</strong>
+                                <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Wind</small>
+                                <strong id="windSpeed" style="font-size: 0.85rem; color: var(--text-primary);">- km/h</strong>
                             </div>
                             <div class="col-4 px-1">
-                                <small class="text-muted d-block" style="font-size: 0.75rem;">Humidity</small>
-                                <strong id="humidity" style="font-size: 0.85rem;">- %</strong>
+                                <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Rain</small>
+                                <strong id="rainFall" style="font-size: 0.85rem; color: var(--text-primary);">- mm</strong>
+                            </div>
+                            <div class="col-4 px-1">
+                                <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Humidity</small>
+                                <strong id="humidity" style="font-size: 0.85rem; color: var(--text-primary);">- %</strong>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card p-3 h-100 d-flex flex-column">
-                    <h5 class="mb-0"><i class="fas fa-money-bill-wave me-2 text-success"></i>Exchange Rate</h5>
+            <div class="col-md-6 animate-in">
+                <div class="card p-3 h-100 d-flex flex-column currency-card">
+                    <h5 class="section-title mb-0">
+                        <i class="fas fa-money-bill-wave me-2" style="color: var(--accent-emerald);"></i>Exchange Rate
+                    </h5>
                     <div id="currencyDetail" class="text-center py-3 flex-grow-1 d-flex flex-column justify-content-center">
                         <div class="mb-3">
-                            <i class="fas fa-coins fa-3x text-warning opacity-75"></i>
+                            <i class="fas fa-coins fa-3x" style="color: var(--accent-amber); opacity: 0.6; filter: drop-shadow(0 0 12px rgba(251,191,36,0.3));"></i>
                         </div>
-                        <h3 id="rateDisplay" class="text-primary fw-bold">-</h3>
+                        <h3 id="rateDisplay" class="fw-bold" style="color: var(--accent-emerald);">-</h3>
                         <p class="text-muted mt-2 mb-0" id="rateDate">-</p>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="card p-3">
-            <h5 class="mb-3"><i class="fas fa-chart-line me-2 text-danger"></i>Risk Trend</h5>
+        <div class="card p-3 animate-in">
+            <h5 class="section-title mb-3">
+                <i class="fas fa-chart-line me-2" style="color: var(--accent-rose);"></i>Risk Trend
+            </h5>
             <div style="min-height: 250px; position: relative;">
                 <canvas id="riskChart"></canvas>
             </div>
@@ -134,9 +162,11 @@
     </div>
     
     <!-- Kolom Kanan: Peta -->
-    <div class="col-lg-5">
+    <div class="col-lg-5 animate-in">
         <div class="card p-3 h-100 d-flex flex-column">
-            <h5 class="mb-3"><i class="fas fa-globe-asia me-2 text-primary"></i>Peta Cuaca Global</h5>
+            <h5 class="section-title mb-3">
+                <i class="fas fa-globe-asia me-2" style="color: var(--accent-blue);"></i>Peta Cuaca Global
+            </h5>
             <div id="weatherMap" class="flex-grow-1" style="min-height: 500px; border-radius: 12px; z-index: 1;"></div>
         </div>
     </div>
@@ -148,6 +178,49 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let countries = [];
+
+    // ===== ANIMATED COUNTER =====
+    function animateCounter(el, targetVal, duration = 800) {
+        const isFloat = String(targetVal).includes('.');
+        const start = 0;
+        const startTime = performance.now();
+        
+        function update(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = start + (targetVal - start) * eased;
+            
+            if (isFloat) {
+                el.textContent = current.toFixed(1);
+            } else {
+                el.textContent = Math.round(current);
+            }
+            
+            if (progress < 1) {
+                requestAnimationFrame(update);
+            }
+        }
+        requestAnimationFrame(update);
+    }
+
+    // ===== RISK GAUGE =====
+    function updateRiskGauge(score, level) {
+        const fill = document.getElementById('gaugeFill');
+        const circumference = 2 * Math.PI * 38; // ~238.76
+        const offset = circumference - (score / 100) * circumference;
+        fill.style.strokeDashoffset = offset;
+
+        let color = 'var(--accent-emerald)';
+        if (level === 'medium') color = 'var(--accent-amber)';
+        else if (level === 'high') color = 'var(--accent-rose)';
+        else if (level === 'critical') color = '#ef4444';
+        fill.setAttribute('stroke', color);
+
+        const numEl = document.getElementById('riskScore');
+        numEl.style.color = color;
+    }
  
     // Load countries
     fetch('/api/countries')
@@ -163,7 +236,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 select.appendChild(opt);
             });
 
-            document.getElementById('totalCountries').textContent = data.countries.length;
+            const count = data.countries.length;
+            const el = document.getElementById('totalCountries');
+            el.textContent = count;
+            animateCounter(el, count);
+
             if (data.countries.length > 0) {
                 select.value = data.countries[0].code;
                 const code = data.countries[0].code;
@@ -188,9 +265,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (total === 0) return;
             const sum = countries.reduce((acc, c) => acc + c.total, 0);
             const avg = (sum / total).toFixed(1);
-            document.getElementById('avgRisk').textContent = avg;
+            const avgEl = document.getElementById('avgRisk');
+            avgEl.textContent = avg;
+            animateCounter(avgEl, parseFloat(avg));
+
             const highRisk = countries.filter(c => c.total >= 35).length;
-            document.getElementById('highRisk').textContent = highRisk;
+            const hrEl = document.getElementById('highRisk');
+            hrEl.textContent = highRisk;
+            animateCounter(hrEl, highRisk);
         })
         .catch(err => console.error('Error loading leaderboard:', err));
     }
@@ -199,7 +281,10 @@ document.addEventListener('DOMContentLoaded', function() {
     fetch('/api/ports')
         .then(res => res.json())
         .then(data => {
-            document.getElementById('totalPorts').textContent = data.count || 0;
+            const count = data.count || 0;
+            const el = document.getElementById('totalPorts');
+            el.textContent = count;
+            animateCounter(el, count);
         })
         .catch(err => console.error('Error loading ports:', err));
 
@@ -235,7 +320,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const level = data.risk.level || 'unknown';
                 const badge = document.getElementById('riskLevel');
                 badge.textContent = level.toUpperCase();
-                badge.className = 'badge risk-badge-' + level;
+                badge.className = 'badge risk-badge-' + level + ' mt-1';
+                badge.style.fontSize = '0.6rem';
+                
+                // Update gauge
+                updateRiskGauge(data.risk.total || 0, level);
             }
             
             // === TAMPILKAN GDP ===
@@ -347,6 +436,12 @@ document.addEventListener('DOMContentLoaded', function() {
             trendData.unshift(prevPoint);
         }
 
+        // Dark-themed gradient
+        const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+        gradient.addColorStop(0, 'rgba(34, 211, 238, 0.2)');
+        gradient.addColorStop(0.5, 'rgba(34, 211, 238, 0.05)');
+        gradient.addColorStop(1, 'rgba(34, 211, 238, 0)');
+
         window.riskChartInstance = new Chart(ctx, {
             type: 'line',
             data: {
@@ -354,27 +449,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 datasets: [{
                     label: 'Risk Score',
                     data: trendData,
-                    borderColor: '#0d9488',
-                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                    tension: 0.3,
+                    borderColor: '#22d3ee',
+                    backgroundColor: gradient,
+                    tension: 0.4,
                     fill: true,
-                    pointBackgroundColor: '#0d9488'
+                    pointBackgroundColor: '#22d3ee',
+                    pointBorderColor: '#0b1120',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#22d3ee',
+                    pointHoverBorderColor: '#fff',
+                    borderWidth: 2.5
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                },
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#e2e8f0',
+                        bodyColor: '#94a3b8',
+                        borderColor: 'rgba(255, 255, 255, 0.08)',
+                        borderWidth: 1,
+                        padding: 12,
+                        cornerRadius: 10,
+                        displayColors: false
+                    }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
                         max: 100,
-                        grid: { color: 'rgba(0,0,0,0.05)' }
+                        grid: { 
+                            color: 'rgba(255, 255, 255, 0.04)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            color: '#64748b',
+                            font: { size: 11, family: 'Inter' },
+                            padding: 8
+                        }
                     },
                     x: {
-                        grid: { display: false }
+                        grid: { display: false },
+                        ticks: {
+                            color: '#64748b',
+                            font: { size: 11, family: 'Inter' },
+                            padding: 8
+                        }
                     }
                 }
             }
@@ -398,11 +527,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Data countries diterima:', data.countries.length);
                 
-                // Inisialisasi peta
+                // Inisialisasi peta — DARK TILES
                 const map = L.map('weatherMap').setView([20, 10], 2);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
-                    attribution: '&copy; OpenStreetMap contributors'
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
                 }).addTo(map);
 
                 // Refresh peta setelah 500ms
@@ -432,10 +561,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             const weather = allWeather[country.code];
                             const risk = riskMap[country.code];
                             
-                            let color = 'green';
-                            if (risk && risk.level === 'medium') color = 'orange';
-                            else if (risk && risk.level === 'high') color = 'red';
-                            else if (risk && risk.level === 'critical') color = 'darkred';
+                            let color = '#34d399';
+                            if (risk && risk.level === 'medium') color = '#fbbf24';
+                            else if (risk && risk.level === 'high') color = '#fb7185';
+                            else if (risk && risk.level === 'critical') color = '#ef4444';
                             
                             let weatherEmoji = '☀️';
                             if (weather) {
@@ -452,12 +581,20 @@ document.addEventListener('DOMContentLoaded', function() {
                             const wind = weather ? `${weather.windspeed} km/h` : '--';
                             
                             const circle = L.circleMarker([country.lat, country.lng], {
-                                radius: 10,
+                                radius: 8,
                                 fillColor: color,
-                                color: '#fff',
-                                weight: 2,
-                                opacity: 1,
-                                fillOpacity: 0.7
+                                color: color,
+                                weight: 1,
+                                opacity: 0.9,
+                                fillOpacity: 0.5
+                            }).addTo(map);
+
+                            // Add a pulsing glow effect
+                            L.circleMarker([country.lat, country.lng], {
+                                radius: 14,
+                                fillColor: color,
+                                color: 'transparent',
+                                fillOpacity: 0.12
                             }).addTo(map);
                             
                             circle.bindPopup(`
