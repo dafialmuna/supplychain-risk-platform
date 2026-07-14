@@ -101,19 +101,19 @@
         .sidebar .nav-link,
         .sidebar .nav-button {
             color: var(--sidebar-text);
-            padding: 11px 18px;
-            border-radius: 10px;
-            margin: 3px 10px;
+            padding: 14px 22px;
+            border-radius: 12px;
+            margin: 4px 16px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             display: flex;
             align-items: center;
-            width: calc(100% - 20px);
+            width: calc(100% - 32px);
             border: 0;
             background: transparent;
             text-align: left;
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 1.05rem;
             position: relative;
         }
 
@@ -121,25 +121,26 @@
         .sidebar .nav-button:hover {
             background: var(--sidebar-hover);
             color: var(--text-primary);
-            transform: translateX(3px);
+            transform: translateX(4px);
         }
 
         .sidebar .nav-link.active {
             background: var(--sidebar-active);
             color: var(--sidebar-active-text);
-            box-shadow: inset 3px 0 0 var(--sidebar-active-text);
+            box-shadow: inset 4px 0 0 var(--sidebar-active-text);
             font-weight: 600;
         }
 
         .sidebar .nav-link.active i {
-            filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5));
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
         }
 
         .sidebar .nav-link i,
         .sidebar .nav-button i {
-            width: 24px;
+            width: 28px;
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 1.2rem;
+            margin-right: 8px;
         }
 
         /* ===== MAIN CONTENT ===== */
