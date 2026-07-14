@@ -29,9 +29,9 @@
             --sidebar-hover: rgba(255, 255, 255, 0.03);
 
             /* Text */
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
 
             /* Accent neon colors */
             --accent-cyan: #22d3ee;
@@ -56,6 +56,14 @@
             font-family: 'Inter', sans-serif;
             color: var(--text-primary);
             overflow-x: hidden;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .small, small {
+            color: var(--text-secondary);
         }
 
         /* Scrollbar */
@@ -147,6 +155,7 @@
             box-shadow: var(--card-shadow);
             border-radius: 16px;
             background: var(--bg-card);
+            color: var(--text-primary);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -269,6 +278,20 @@
         .form-select option {
             background: #0f172a;
             color: var(--text-primary);
+        }
+
+        /* ===== PLACEHOLDER VISIBILITY ===== */
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.45);
+            opacity: 1; /* Override Firefox default opacity */
+        }
+
+        /* ===== FORM LABEL ===== */
+        .form-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.88rem;
+            letter-spacing: 0.2px;
         }
 
         /* ===== DETAIL STATS (country info row) ===== */
@@ -401,6 +424,10 @@
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.04);
         }
+        
+        .leaflet-container {
+            background: #0b1120 !important; /* Same as body background or slate-900 (#0f172a) */
+        }
 
         /* Fix Leaflet popups for dark theme */
         .leaflet-popup-content-wrapper {
@@ -466,11 +493,6 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('dashboard') }}" data-section="country">
-                            <i class="fas fa-flag me-2"></i>Country Dashboard
-                        </a>
-                    </li>
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('dashboard.weather') ? 'active' : '' }}" href="{{ route('dashboard.weather') }}" data-section="weather">

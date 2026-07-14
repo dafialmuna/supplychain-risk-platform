@@ -8,7 +8,7 @@
         <i class="fas fa-tachometer-alt me-2" style="color: var(--accent-cyan); filter: drop-shadow(0 0 8px rgba(34,211,238,0.4));"></i>Dashboard
     </h2>
     <span class="text-muted" style="font-size: 0.85rem;">
-        <i class="far fa-clock me-1"></i>{{ now()->format('d M Y H:i') }} UTC
+        <i class="far fa-clock me-1"></i>{{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }} WIB
     </span>
 </div>
 
@@ -164,9 +164,17 @@
     <!-- Kolom Kanan: Peta -->
     <div class="col-lg-5 animate-in">
         <div class="card p-3 h-100 d-flex flex-column">
-            <h5 class="section-title mb-3">
-                <i class="fas fa-globe-asia me-2" style="color: var(--accent-blue);"></i>Peta Cuaca Global
-            </h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="section-title mb-0">
+                    <i class="fas fa-globe-asia me-2" style="color: var(--accent-blue);"></i>Peta Cuaca Global
+                </h5>
+                <div class="d-flex align-items-center" id="routeControls" style="display: none !important;">
+                    <small class="text-muted me-2 text-nowrap"><i class="fas fa-ship me-1"></i> Asal Rute:</small>
+                    <select id="mapOriginSelect" class="form-select form-select-sm" style="width: 140px; background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-primary);">
+                        <option value="ID">Indonesia</option>
+                    </select>
+                </div>
+            </div>
             <div id="weatherMap" class="flex-grow-1" style="min-height: 500px; border-radius: 12px; z-index: 1;"></div>
         </div>
     </div>
@@ -178,6 +186,9 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     let countries = [];
+    window.globalWeatherMap = null;
+    window.currentRouteLayer = null;
+    window.currentPolyline = null;
 
     // ===== ANIMATED COUNTER =====
     function animateCounter(el, targetVal, duration = 800) {
@@ -242,8 +253,16 @@ document.addEventListener('DOMContentLoaded', function() {
             animateCounter(el, count);
 
             if (data.countries.length > 0) {
-                select.value = data.countries[0].code;
-                const code = data.countries[0].code;
+                const urlParams = new URLSearchParams(window.location.search);
+                const countryParam = urlParams.get('country');
+                
+                let selectedCode = data.countries[0].code;
+                if (countryParam && data.countries.find(c => c.code === countryParam)) {
+                    selectedCode = countryParam;
+                }
+                
+                select.value = selectedCode;
+                const code = selectedCode;
                 loadCountryData(code).then(countryData => {
                     if (countryData && countryData.risk) {
                         loadRiskTrend(code, countryData.risk.total);
@@ -299,6 +318,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     loadRiskTrend(code);
                 }
             });
+            document.getElementById('routeControls').style.setProperty('display', 'flex', 'important');
+            drawMapRoute(document.getElementById('mapOriginSelect').value, code, countries);
+        } else {
+            document.getElementById('routeControls').style.setProperty('display', 'none', 'important');
+            if (window.currentRouteLayer && window.globalWeatherMap) window.globalWeatherMap.removeLayer(window.currentRouteLayer);
+            if (window.currentPolyline && window.globalWeatherMap) window.globalWeatherMap.removeLayer(window.currentPolyline);
+            if (window.globalWeatherMap) window.globalWeatherMap.setView([20, 10], 2);
         }
     });
 
@@ -527,8 +553,30 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Data countries diterima:', data.countries.length);
                 
+                // Populate origin select
+                const originSelect = document.getElementById('mapOriginSelect');
+                if (originSelect) {
+                    originSelect.innerHTML = '';
+                    data.countries.forEach(c => {
+                        const opt = document.createElement('option');
+                        opt.value = c.code;
+                        opt.textContent = c.name;
+                        if (c.code === 'ID') opt.selected = true;
+                        originSelect.appendChild(opt);
+                    });
+                    
+                    originSelect.addEventListener('change', () => {
+                        const destCode = new URLSearchParams(window.location.search).get('country') || document.getElementById('countrySelect').value;
+                        if (destCode) {
+                            drawMapRoute(originSelect.value, destCode, data.countries);
+                        }
+                    });
+                }
+
                 // Inisialisasi peta — DARK TILES
+                if (window.globalWeatherMap) { window.globalWeatherMap.remove(); }
                 const map = L.map('weatherMap').setView([20, 10], 2);
+                window.globalWeatherMap = map;
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                     maxZoom: 19,
                     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
@@ -609,12 +657,62 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Refresh peta setelah semua marker
                     setTimeout(() => {
                         map.invalidateSize();
-                        console.log('Peta di-refresh setelah marker');
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const selectedCountryCode = urlParams.get('country');
+                        
+                        if (selectedCountryCode) {
+                            document.getElementById('routeControls').style.setProperty('display', 'flex', 'important');
+                            drawMapRoute(document.getElementById('mapOriginSelect').value, selectedCountryCode, data.countries);
+                        } else {
+                            const currentSelectVal = document.getElementById('countrySelect').value;
+                            if (currentSelectVal) {
+                                document.getElementById('routeControls').style.setProperty('display', 'flex', 'important');
+                                drawMapRoute(document.getElementById('mapOriginSelect').value, currentSelectVal, data.countries);
+                            }
+                        }
                     }, 1500);
                 })
                 .catch(err => console.error('Error loading leaderboard or weather for map:', err));
             })
             .catch(err => console.error('Error loading countries:', err));
+    }
+
+    function drawMapRoute(originCode, destCode, countriesList) {
+        const map = window.globalWeatherMap;
+        if (!map) return;
+        
+        if (window.currentRouteLayer) { map.removeLayer(window.currentRouteLayer); }
+        if (window.currentPolyline) { map.removeLayer(window.currentPolyline); }
+        
+        const origin = countriesList.find(c => c.code === originCode);
+        const dest = countriesList.find(c => c.code === destCode);
+        
+        if (origin && dest && origin.code !== dest.code) {
+            import('https://esm.sh/searoute-js@0.1.0').then(module => {
+                const searoute = module.default;
+                const originPt = { type: "Feature", geometry: { type: "Point", coordinates: [origin.lng, origin.lat] } };
+                const destPt = { type: "Feature", geometry: { type: "Point", coordinates: [dest.lng, dest.lat] } };
+                
+                try {
+                    const routeGeoJSON = searoute(originPt, destPt);
+                    if (routeGeoJSON) {
+                        window.currentRouteLayer = L.geoJSON(routeGeoJSON, {
+                            style: { color: '#38bdf8', weight: 4, dashArray: '10, 10', opacity: 0.9 }
+                        }).addTo(map);
+                        map.fitBounds(window.currentRouteLayer.getBounds(), { padding: [50, 50] });
+                    }
+                } catch (e) {
+                    console.error("Gagal menggambar rute laut:", e);
+                    window.currentPolyline = L.polyline([[origin.lat, origin.lng], [dest.lat, dest.lng]], {
+                        color: '#38bdf8', weight: 4, dashArray: '10, 10', opacity: 0.9
+                    }).addTo(map);
+                    map.fitBounds(window.currentPolyline.getBounds(), { padding: [50, 50] });
+                }
+            });
+        } else if (dest) {
+            map.setView([dest.lat, dest.lng], 4);
+        }
     }
 
     // Panggil peta setelah DOM siap

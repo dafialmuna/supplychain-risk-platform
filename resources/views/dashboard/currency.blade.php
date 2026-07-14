@@ -13,19 +13,20 @@
         <div class="card p-3 h-100">
             <h5 class="mb-3">Select Base Currency</h5>
             <select id="baseCurrency" class="form-select mb-3">
-                <option value="USD">USD - US Dollar</option>
-                <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - British Pound</option>
+                @foreach($currencies as $curr)
+                    <option value="{{ $curr->currency }}" {{ $curr->currency == 'USD' ? 'selected' : '' }}>
+                        {{ $curr->currency }} - {{ $curr->currency_name }}
+                    </option>
+                @endforeach
             </select>
 
             <h5 class="mb-3">Select Target Currency</h5>
             <select id="targetCurrency" class="form-select mb-3">
-                <option value="EUR">EUR - Euro</option>
-                <option value="GBP">GBP - British Pound</option>
-                <option value="JPY">JPY - Japanese Yen</option>
-                <option value="CNY">CNY - Chinese Yuan</option>
-                <option value="IDR">IDR - Indonesian Rupiah</option>
-                <option value="AUD">AUD - Australian Dollar</option>
+                @foreach($currencies as $curr)
+                    <option value="{{ $curr->currency }}" {{ $curr->currency == 'EUR' ? 'selected' : '' }}>
+                        {{ $curr->currency }} - {{ $curr->currency_name }}
+                    </option>
+                @endforeach
             </select>
 
             <div class="mt-auto pt-3 border-top text-center">

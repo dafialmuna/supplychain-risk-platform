@@ -24,7 +24,7 @@
                     <div class="badge bg-secondary" id="levelA">-</div>
                 </div>
                 
-                <table class="table table-borderless">
+                <table class="table table-borderless" style="--bs-table-bg: transparent; --bs-table-color: var(--text-primary);">
                     <tbody>
                         <tr>
                             <td class="text-muted">GDP (USD)</td>
@@ -71,7 +71,7 @@
                     <div class="badge bg-secondary" id="levelB">-</div>
                 </div>
                 
-                <table class="table table-borderless">
+                <table class="table table-borderless" style="--bs-table-bg: transparent; --bs-table-color: var(--text-primary);">
                     <tbody>
                         <tr>
                             <td class="text-muted">GDP (USD)</td>

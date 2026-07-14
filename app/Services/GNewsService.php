@@ -77,14 +77,22 @@ class GNewsService
             "New trade agreement boosts regional cooperation"
         ];
 
+        $descriptions = [
+            "In a recent turn of events, global supply chains are experiencing unprecedented shifts. Industry leaders are warning that issues surrounding {$query} could severely impact delivery times and operational costs. Stakeholders are advised to reconsider their risk mitigation strategies as the economic climate remains highly volatile.",
+            "Data from the latest quarter indicates a significant disruption in traditional trade routes. Experts suggest that the current volatility related to {$query} is forcing multinational corporations to heavily invest in alternative logistics frameworks, underscoring the fragile nature of international commerce.",
+            "According to prominent economic analysts, the recent surge in demand coupled with bottlenecked ports has created a perfect storm for the industry. The impact of {$query} is expected to resonate throughout the market, driving up inflation and forcing companies to adopt next-generation technologies.",
+            "A comprehensive review of the latest market trends reveals that {$query} is becoming a central concern for policymakers. Governments and private sectors are now collaborating to establish more resilient infrastructure capable of withstanding future economic shocks.",
+            "Market volatility has reached new heights this week as {$query} continues to dominate headlines. Financial institutions predict that if these disruptions persist, consumer prices will inevitably rise, prompting an urgent need for digital transformation across the global supply network."
+        ];
+
         $articles = [];
         for ($i = 0; $i < 5; $i++) {
             $articles[] = [
-                'title' => $titles[array_rand($titles)] . " (dummy)",
-                'description' => "This is a sample news article about {$query}. For real news, set GNEWS_API_KEY in .env",
-                'content' => "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " . str_repeat("Sample content about {$query}. ", 5),
+                'title' => $titles[array_rand($titles)],
+                'description' => $descriptions[array_rand($descriptions)],
+                'content' => "This is a detailed analysis of the current situation. " . str_repeat("Developments about {$query} continue to evolve. ", 5),
                 'url' => '#',
-                'source' => ['name' => 'Dummy News Service'],
+                'source' => ['name' => 'Global Logistics News'],
                 'publishedAt' => date('Y-m-d\TH:i:s\Z', strtotime('-'.rand(1,24).' hours')),
             ];
         }

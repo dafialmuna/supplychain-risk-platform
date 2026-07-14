@@ -34,7 +34,7 @@
                         <div>Region: {{ $item->country->region }}</div>
                         <div>Currency: {{ $item->country->currency }}</div>
                     </div>
-                    <a href="#" class="btn btn-sm btn-primary mt-2">View Details</a>
+                    <a href="{{ route('dashboard', ['country' => $item->country->code]) }}" class="btn btn-sm btn-primary mt-2">View Details</a>
                 </div>
             </div>
         @endforeach

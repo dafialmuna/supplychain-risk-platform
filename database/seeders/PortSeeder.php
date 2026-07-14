@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Port;
+use App\Models\Country;
 
 class PortSeeder extends Seeder
 {
@@ -29,7 +30,26 @@ class PortSeeder extends Seeder
         ];
 
         foreach ($ports as $data) {
-            Port::create($data);
+            Port::firstOrCreate(['name' => $data['name']], $data);
+        }
+
+        // Add capitals as ports to make it global
+        $countries = Country::all();
+        foreach ($countries as $country) {
+            if ($country->capital && $country->lat && $country->lng) {
+                $portName = 'Port of ' . $country->capital;
+                Port::firstOrCreate(
+                    ['name' => $portName],
+                    [
+                        'country' => $country->name,
+                        'country_code' => $country->code,
+                        'lat' => $country->lat,
+                        'lng' => $country->lng,
+                        'type' => 'Seaport',
+                        'region' => $country->region ?? 'Unknown'
+                    ]
+                );
+            }
         }
     }
 }

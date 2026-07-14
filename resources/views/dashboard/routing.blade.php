@@ -47,11 +47,11 @@
                     <strong id="routeDistance">-</strong>
                 </div>
                 
-                <div class="p-3 bg-light rounded mt-3 text-center border">
-                    <small class="text-muted d-block mb-2">Ocean Weather Risk (Midpoint)</small>
+                <div class="p-3 rounded mt-3 text-center" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255,255,255,0.05);">
+                    <small class="text-muted d-block mb-2">Risiko Cuaca Laut (Titik Tengah)</small>
                     <div class="display-4 mb-2" id="midpointIcon">🌊</div>
-                    <strong id="midpointTemp" class="fs-4 d-block">- °C</strong>
-                    <span id="midpointWind" class="badge bg-secondary mt-1">- km/h wind</span>
+                    <strong id="midpointTemp" class="fs-4 d-block text-white">- °C</strong>
+                    <span id="midpointWind" class="badge bg-primary mt-1" style="background: rgba(56, 189, 248, 0.2) !important; color: #38bdf8 !important; border: 1px solid rgba(56, 189, 248, 0.3);">- km/h wind</span>
                 </div>
             </div>
         </div>
@@ -103,6 +103,27 @@ function loadPorts() {
             
             populateSelect('originPort');
             populateSelect('destPort');
+
+            // Cek parameter URL dari halaman Admin (Klik daftar pantauan user)
+            const urlParams = new URLSearchParams(window.location.search);
+            const destCountry = urlParams.get('destination');
+            
+            if (destCountry) {
+                // Set default asal: Tanjung Priok / Port dari Indonesia
+                const defaultOrigin = allPorts.find(p => (p.country === 'Indonesia' || p.country_code === 'ID') && p.name.includes('Priok')) || allPorts.find(p => p.country === 'Indonesia');
+                // Set tujuan berdasarkan parameter negara
+                const defaultDest = allPorts.find(p => p.country_code === destCountry || p.country === destCountry);
+                
+                if (defaultOrigin && defaultDest) {
+                    document.getElementById('originPort').value = defaultOrigin.id;
+                    document.getElementById('destPort').value = defaultDest.id;
+                    
+                    // Otomatis hitung rute
+                    setTimeout(() => {
+                        simulateRoute();
+                    }, 500);
+                }
+            }
         })
         .catch(err => console.error("Failed to load ports", err));
 }

@@ -4,27 +4,35 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="fas fa-cloud-sun me-2 text-primary"></i>Global Weather Monitoring</h2>
-    <span class="text-muted">{{ now()->format('d M Y H:i') }} UTC</span>
+    <h2><i class="fas fa-cloud-sun me-2 text-primary"></i>Pemantauan Cuaca Global</h2>
+    <span class="text-muted" style="font-size: 0.85rem;">
+        <i class="far fa-clock me-1"></i>{{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }} WIB
+    </span>
 </div>
 
-<div class="row g-3 mb-3">
-    <div class="col-md-4">
-        <label class="form-label fw-bold">Select Country to Monitor Weather:</label>
-        <select id="weatherCountrySelect" class="form-select">
-            <option value="">Loading countries...</option>
-        </select>
-    </div>
-    <div class="col-md-8 d-flex align-items-end">
-        <button class="btn btn-primary" onclick="checkWeather()">
-            <i class="fas fa-search me-2"></i>Check Weather
-        </button>
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card p-4 border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05) !important;">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label text-secondary" style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;">Pilih Negara untuk Memantau Cuaca:</label>
+                    <select id="weatherCountrySelect" class="form-select">
+                        <option value="">Loading countries...</option>
+                    </select>
+                </div>
+                <div class="col-md-8 d-flex align-items-end">
+                    <button class="btn btn-primary" onclick="checkWeather()">
+                        <i class="fas fa-search me-2"></i>Periksa Cuaca
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="card p-3 h-100">
-    <h5 class="mb-3"><i class="fas fa-globe me-2"></i>Peta Cuaca Global (Hujan, Badai, Angin Kencang)</h5>
-    <div id="weatherMap" style="height: 60vh; border-radius: 8px;"></div>
+<div class="card p-4 h-100 border-0 shadow-lg" style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05) !important;">
+    <h5 class="mb-3 fw-bold"><i class="fas fa-globe me-2 text-info"></i>Peta Cuaca Global (Hujan, Badai, Angin Kencang)</h5>
+    <div id="weatherMap" style="height: 65vh; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);"></div>
 </div>
 @endsection
 
@@ -44,9 +52,9 @@ function initWeatherMap() {
     if (!container) return;
 
     weatherMap = L.map('weatherMap').setView([20, 10], 2);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
     }).addTo(weatherMap);
 }
 

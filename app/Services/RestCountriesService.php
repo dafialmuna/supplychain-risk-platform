@@ -8,12 +8,30 @@ class RestCountriesService
 {
     protected $client;
 
+    protected $jsonUrl = 'https://raw.githubusercontent.com/restcountries/restcountries/master/src/main/resources/countriesV3.1.json';
+    protected $cachedData = null;
+
     public function __construct()
     {
         $this->client = new Client([
-            'base_uri' => 'https://restcountries.com/v3.1/',
-            'timeout' => 10,
+            'verify' => false, // Bypass SSL for local development
+            'timeout' => 15,
         ]);
+    }
+
+    protected function fetchData()
+    {
+        if ($this->cachedData !== null) {
+            return $this->cachedData;
+        }
+
+        try {
+            $response = $this->client->get($this->jsonUrl);
+            $this->cachedData = json_decode($response->getBody(), true);
+            return $this->cachedData;
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -21,16 +39,15 @@ class RestCountriesService
      */
     public function getCountry($code)
     {
-        try {
-            $response = $this->client->get("alpha/{$code}");
-            $data = json_decode($response->getBody(), true);
-            if (isset($data[0])) {
-                return $data[0];
+        $data = $this->fetchData();
+        if (is_array($data)) {
+            foreach ($data as $country) {
+                if (isset($country['cca2']) && strtoupper($country['cca2']) === strtoupper($code)) {
+                    return $country;
+                }
             }
-            return null;
-        } catch (\Exception $e) {
-            return null;
         }
+        return null;
     }
 
     /**
@@ -38,11 +55,6 @@ class RestCountriesService
      */
     public function getAllCountries()
     {
-        try {
-            $response = $this->client->get('all');
-            return json_decode($response->getBody(), true);
-        } catch (\Exception $e) {
-            return [];
-        }
+        return $this->fetchData();
     }
 }

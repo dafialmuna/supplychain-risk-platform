@@ -18,7 +18,12 @@ class DashboardController extends Controller
 
     public function currency()
     {
-        return view('dashboard.currency');
+        $currencies = \App\Models\Country::whereNotNull('currency')
+            ->select('currency', 'currency_name')
+            ->distinct()
+            ->orderBy('currency')
+            ->get();
+        return view('dashboard.currency', compact('currencies'));
     }
 
     public function news()
