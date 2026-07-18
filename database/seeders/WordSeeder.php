@@ -5,11 +5,15 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\PositiveWord;
 use App\Models\NegativeWord;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class WordSeeder extends Seeder
 {
     public function run()
     {
+        $now = Carbon::now();
+
         $positive = [
             'growth', 'increase', 'profit', 'stable', 'improve', 'positive', 'gain',
             'boost', 'recovery', 'expansion', 'surplus', 'boom', 'upturn', 'revival',
@@ -32,12 +36,24 @@ class WordSeeder extends Seeder
             'crash', 'plunge', 'slump'
         ];
 
-        foreach ($positive as $word) {
-            PositiveWord::firstOrCreate(['word' => $word]);
-        }
+        $positiveData = array_map(function ($word) use ($now) {
+            return [
+                'word' => $word,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }, $positive);
 
-        foreach ($negative as $word) {
-            NegativeWord::firstOrCreate(['word' => $word]);
-        }
+        $negativeData = array_map(function ($word) use ($now) {
+            return [
+                'word' => $word,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }, $negative);
+
+        // Bulk insert or ignore to prevent duplicates without firing a query per word
+        DB::table('positive_words')->insertOrIgnore($positiveData);
+        DB::table('negative_words')->insertOrIgnore($negativeData);
     }
 }

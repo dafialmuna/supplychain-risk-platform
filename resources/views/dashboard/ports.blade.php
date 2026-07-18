@@ -44,6 +44,9 @@
 @endsection
 
 @push('scripts')
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 <script>
 let portsMap;
 let markersLayer;
@@ -65,7 +68,14 @@ function initPortsMap() {
         attribution: '&copy; <a href="https://carto.com/">CARTO</a>'
     }).addTo(portsMap);
 
-    markersLayer = L.layerGroup().addTo(portsMap);
+    // Gunakan MarkerClusterGroup
+    markersLayer = L.markerClusterGroup({
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        maxClusterRadius: 40,
+        spiderLegPolylineOptions: { weight: 1.5, color: '#0ea5e9', opacity: 0.5 }
+    }).addTo(portsMap);
 
     // Fetch all ports
     fetch('/api/ports')
@@ -169,6 +179,17 @@ function filterPorts() {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
+}
+
+/* Kustomisasi MarkerCluster untuk tema gelap */
+.marker-cluster-small, .marker-cluster-medium, .marker-cluster-large {
+    background-color: rgba(14, 165, 233, 0.4);
+}
+.marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div {
+    background-color: rgba(14, 165, 233, 0.9);
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(14, 165, 233, 0.8);
 }
 </style>
 @endpush

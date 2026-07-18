@@ -5,7 +5,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2><i class="fas fa-chart-bar me-2 text-primary"></i>Data Visualization Dashboard</h2>
-    <span class="text-muted">{{ now()->format('d M Y H:i') }} UTC</span>
+    <span class="text-muted" style="font-size: 0.85rem;">
+        <i class="far fa-clock me-1"></i>{{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }} WIB
+    </span>
 </div>
 
 <div class="row mb-4">
