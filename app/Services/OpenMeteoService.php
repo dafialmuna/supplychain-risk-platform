@@ -13,6 +13,7 @@ class OpenMeteoService
         $this->client = new Client([
             'base_uri' => 'https://api.open-meteo.com/v1/',
             'timeout' => 10,
+            'verify' => false,
         ]);
     }
 
