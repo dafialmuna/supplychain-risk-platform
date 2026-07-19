@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: supplychain-app
+    container_name: supplychain_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=supplychain_db
+      - DB_USERNAME=supplychain_user
+      - DB_PASSWORD=secret
+    depends_on:
+      - db
+    networks:
+      - supplychain-network
+
+  db:
+    image: mysql:8.0
+    container_name: supplychain_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: supplychain_db
+      MYSQL_USER: supplychain_user
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - supplychain-network
+
+networks:
+  supplychain-network:
+    driver: bridge
+
+volumes:
+  dbdata:
