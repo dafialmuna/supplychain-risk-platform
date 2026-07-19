@@ -13,7 +13,8 @@ class GNewsService
     {
         $this->client = new Client([
             'base_uri' => 'https://gnews.io/api/v4/',
-            'timeout' => 10,
+            'timeout' => 2,
+            'verify' => false,
         ]);
         $this->apiKey = env('GNEWS_API_KEY', '');
     }

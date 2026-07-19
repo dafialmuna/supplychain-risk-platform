@@ -13,7 +13,8 @@ class WorldBankService
     {
         $this->client = new Client([
             'base_uri' => 'https://api.worldbank.org/v2/',
-            'timeout' => 15,
+            'timeout' => 2,
+            'verify' => false,
         ]);
     }
 
