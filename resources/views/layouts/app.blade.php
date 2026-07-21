@@ -72,9 +72,9 @@
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
-            min-height: 100vh;
+            height: 100vh;
+            overflow-y: auto;
             background: var(--sidebar-bg);
             color: #e2e8f0;
             position: sticky;
@@ -563,6 +563,10 @@
                                 <i class="fas fa-right-from-bracket me-2"></i>Logout
                             </button>
                         </form>
+                    @else
+                        <a href="{{ route('login') }}" class="nav-button" style="color: var(--accent-cyan);">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
                     @endauth
                 </div>
             </nav>

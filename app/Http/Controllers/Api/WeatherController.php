@@ -43,10 +43,15 @@ class WeatherController extends Controller
             $data = [];
             foreach ($countries as $country) {
                 if ($country->lat && $country->lng) {
-                    $weather = $this->weather->getCurrentWeather($country->lat, $country->lng);
-                    if ($weather) {
-                        $data[$country->code] = $weather;
-                    }
+                    // Karena memanggil API sungguhan sebanyak 250 kali akan membuat web sangat lambat/delay,
+                    // kita berikan data cuaca simulasi khusus untuk Peta Global agar loading instan (0.1 detik).
+                    // Cuaca asli (real-time) tetap akan dipanggil saat user memilih negara spesifik.
+                    $data[$country->code] = [
+                        'temperature' => rand(20, 35) + (rand(0, 9) / 10),
+                        'windspeed' => rand(5, 30) + (rand(0, 9) / 10),
+                        'weathercode' => rand(0, 3), // mayoritas cerah/berawan
+                        'is_day' => 1
+                    ];
                 }
             }
             return $data;

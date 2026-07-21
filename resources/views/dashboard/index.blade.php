@@ -7,9 +7,29 @@
     <h2 class="mb-0" style="font-weight: 800; letter-spacing: -0.5px;">
         <i class="fas fa-tachometer-alt me-2" style="color: var(--accent-cyan); filter: drop-shadow(0 0 8px rgba(34,211,238,0.4));"></i>Dashboard
     </h2>
-    <span class="text-muted" style="font-size: 0.85rem;">
-        <i class="far fa-clock me-1"></i>{{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }} WIB
-    </span>
+    <div class="d-flex align-items-center">
+        <span class="text-muted me-3 d-none d-md-inline" style="font-size: 0.85rem;">
+            <i class="far fa-clock me-1"></i>{{ now()->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }} WIB
+        </span>
+        @auth
+        <div class="dropdown">
+            <button class="btn btn-sm dropdown-toggle d-flex align-items-center" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-primary); border-radius: 8px; padding: 6px 12px;">
+                <i class="fas fa-user-circle me-2" style="color: var(--accent-cyan); font-size: 1.2rem;"></i> 
+                <span class="fw-semibold">{{ auth()->user()->name }}</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow" style="background: var(--bg-card-solid); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;">
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="dropdown-item text-danger d-flex align-items-center" style="font-weight: 500;">
+                            <i class="fas fa-sign-out-alt me-2"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+        @endauth
+    </div>
 </div>
 
 <!-- KPI Cards -->
@@ -88,15 +108,15 @@
                     </div>
                 </div>
                 <div class="col-md-3 stat-item">
-                    <div class="kpi-label">GDP (USD)</div>
+                    <div class="kpi-label"><i class="fas fa-money-bill-wave me-1 text-success"></i>GDP (USD)</div>
                     <div class="kpi-value mt-3" id="gdpDisplay" style="font-size:1.2rem;">-</div>
                 </div>
                 <div class="col-md-3 stat-item">
-                    <div class="kpi-label">Inflation</div>
+                    <div class="kpi-label"><i class="fas fa-chart-line me-1 text-danger"></i>Inflation</div>
                     <div class="kpi-value mt-3" id="inflationDisplay">-</div>
                 </div>
                 <div class="col-md-3 stat-item">
-                    <div class="kpi-label">Population</div>
+                    <div class="kpi-label"><i class="fas fa-users me-1 text-primary"></i>Population</div>
                     <div class="kpi-value mt-3" id="populationDisplay" style="font-size:1.2rem;">-</div>
                 </div>
             </div>
@@ -119,17 +139,13 @@
                         <h3 id="weatherTempDisplay" class="mt-2 fw-bold" style="color: var(--text-primary);">- °C</h3>
                         <p id="weatherDesc" class="text-muted mb-0">Loading...</p>
                         <div class="row mt-auto pt-3 weather-stats w-100 mx-0">
-                            <div class="col-4 px-1">
+                            <div class="col-6 px-1 border-end border-secondary border-opacity-25">
                                 <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Wind</small>
                                 <strong id="windSpeed" style="font-size: 0.85rem; color: var(--text-primary);">- km/h</strong>
                             </div>
-                            <div class="col-4 px-1">
+                            <div class="col-6 px-1">
                                 <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Rain</small>
                                 <strong id="rainFall" style="font-size: 0.85rem; color: var(--text-primary);">- mm</strong>
-                            </div>
-                            <div class="col-4 px-1">
-                                <small class="text-muted d-block" style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px;">Humidity</small>
-                                <strong id="humidity" style="font-size: 0.85rem; color: var(--text-primary);">- %</strong>
                             </div>
                         </div>
                     </div>
@@ -166,10 +182,10 @@
         <div class="card p-3 h-100 d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h5 class="section-title mb-0">
-                    <i class="fas fa-globe-asia me-2" style="color: var(--accent-blue);"></i>Peta Cuaca Global
+                    <i class="fas fa-globe-asia me-2" style="color: var(--accent-blue);"></i>Global Weather Map
                 </h5>
                 <div class="d-flex align-items-center" id="routeControls" style="display: none !important;">
-                    <small class="text-muted me-2 text-nowrap"><i class="fas fa-ship me-1"></i> Asal Rute:</small>
+                    <small class="text-muted me-2 text-nowrap"><i class="fas fa-ship me-1"></i> Origin Route:</small>
                     <select id="mapOriginSelect" class="form-select form-select-sm" style="width: 140px; background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text-primary);">
                         <option value="ID">Indonesia</option>
                     </select>
