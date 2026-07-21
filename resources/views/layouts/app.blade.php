@@ -502,6 +502,12 @@
                     </li>
 
                     <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('tracking.*') ? 'active' : '' }}" href="{{ route('tracking.index') }}" data-section="tracking">
+                            <i class="fas fa-box-open me-2 text-warning"></i>Lacak Kargo
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('dashboard.currency') ? 'active' : '' }}" href="{{ route('dashboard.currency') }}" data-section="currency">
                             <i class="fas fa-money-bill-wave me-2"></i>Currency Impact
                         </a>

@@ -12,6 +12,10 @@ Route::get('/', function () {
     return view('dashboard.index'); // Arahkan ke dashboard utama kita
 })->name('home');
 
+// ========== TRACKING CARGO ==========
+Route::get('/tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+Route::post('/tracking', [\App\Http\Controllers\TrackingController::class, 'search'])->name('tracking.search');
+
 // ========== HALAMAN DASHBOARD ==========
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
