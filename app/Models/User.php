@@ -30,6 +30,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function shipments()
+    {
+        return $this->hasMany(Shipment::class);
+    }
+
     /**
      * Cek apakah user adalah admin.
      *

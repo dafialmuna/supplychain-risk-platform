@@ -27,4 +27,13 @@ class TrackingController extends Controller
 
         return view('tracking.index', compact('shipment'));
     }
+
+    public function myShipments()
+    {
+        $shipments = \App\Models\Shipment::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        return view('tracking.my_shipments', compact('shipments'));
+    }
 }

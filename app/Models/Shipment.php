@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Shipment extends Model
 {
-    protected $fillable = ['tracking_number', 'origin_country', 'destination_country', 'status', 'current_lat', 'current_lng'];
+    protected $fillable = ['user_id', 'tracking_number', 'origin_country', 'destination_country', 'status', 'current_lat', 'current_lng'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function logs()
     {

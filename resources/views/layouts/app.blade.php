@@ -502,10 +502,18 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('tracking.*') ? 'active' : '' }}" href="{{ route('tracking.index') }}" data-section="tracking">
-                            <i class="fas fa-box-open me-2 text-warning"></i>Lacak Kargo
+                        <a class="nav-link {{ request()->routeIs('tracking.index') || request()->routeIs('tracking.search') ? 'active' : '' }}" href="{{ route('tracking.index') }}" data-section="tracking">
+                            <i class="fas fa-box-open me-2 text-warning"></i>Lacak Kargo (Publik)
                         </a>
                     </li>
+                    
+                    @auth
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('tracking.my_shipments') ? 'active' : '' }}" href="{{ route('tracking.my_shipments') }}" data-section="my_shipments">
+                            <i class="fas fa-boxes me-2 text-info"></i>Kargo Saya
+                        </a>
+                    </li>
+                    @endauth
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('dashboard.currency') ? 'active' : '' }}" href="{{ route('dashboard.currency') }}" data-section="currency">
@@ -554,6 +562,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('admin.dashboard') }}">
                                     <i class="fas fa-cog me-2"></i>Admin
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('admin.shipments.*') ? 'active' : '' }}" href="{{ route('admin.shipments.index') }}">
+                                    <i class="fas fa-shipping-fast me-2 text-warning"></i>Manajemen Kargo
                                 </a>
                             </li>
                         @endif

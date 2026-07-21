@@ -46,12 +46,17 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('users', UserController::class);
     Route::resource('ports', PortController::class);
     Route::resource('articles', ArticleController::class);
+    Route::resource('shipments', \App\Http\Controllers\Admin\ShipmentController::class);
+    Route::post('shipments/{shipment}/log', [\App\Http\Controllers\Admin\ShipmentController::class, 'addLog'])->name('shipments.addLog');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/watchlist', [App\Http\Controllers\WatchlistController::class, 'index'])->name('watchlist.index');
     Route::post('/watchlist', [App\Http\Controllers\WatchlistController::class, 'store'])->name('watchlist.store');
     Route::delete('/watchlist/{id}', [App\Http\Controllers\WatchlistController::class, 'destroy'])->name('watchlist.destroy');
+    
+    // User Shipments
+    Route::get('/my-shipments', [\App\Http\Controllers\TrackingController::class, 'myShipments'])->name('tracking.my_shipments');
 });
 // ========== AUTH ROUTES (Breeze) ==========
 require __DIR__.'/auth.php';
